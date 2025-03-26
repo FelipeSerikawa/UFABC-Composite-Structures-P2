@@ -31,3 +31,9 @@ T12 = (cos(theta)^2 - sin(theta)^2) * Txy + cos(theta) * sin(theta) * (Sy - Sx);
 S1
 S2
 T12
+
+# 5 - Calcular as componentes das deformações (strains) nas direções 1 e 2
+v21 = (E2 * v12) / E1;
+e1 = (S1 - v12 * S2) / E1;
+e2 = (S2 - v21 * S1) / E2;
+Y12 = T12 / G12;
