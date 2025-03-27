@@ -1,0 +1,77 @@
+p2_versao2.m
+
+% APLICAÇÕES ESTRUTURAIS DE MATERIAIS COMPÓSITOS - ESAE001-23 PROVA 2 - TRABALHO
+
+clc
+
+% Material: Carbon Epoxy (AS4/3501-6)
+
+% 1 - Propriedades da lâmina (unidades convertidas para MPa)
+fprintf('Propriedades do Material: Carbon/Epoxy (AS4/3501-6)\n');
+E1 = 147000;   % MPa (convertido de 147 GPa)
+E2 = 10300;    % MPa (convertido de 10.3 GPa)
+v12 = 0.27;
+G12 = 7000;    % MPa (convertido de 7 GPa)
+Xt = 2280;     % MPa
+Xc = 1725;     % MPa
+Yt = 57;       % MPa
+Yc = 228;      % MPa
+S6 = 76;       % MPa
+
+% 2 - Ângulo theta (em graus)
+theta = 45;
+theta_rad = theta * pi / 180;  % Converter para radianos
+
+% 3 - Estado de tensão (Sx, Sy, Txy) em MPa
+Sx = 125;
+Sy = 0;
+Txy = 250;
+
+% 4 - Calcular o estado de tensão nas direções 1 e 2 (S1, S2, T12)
+m = cos(theta_rad);
+n = sin(theta_rad);
+S1 = m^2 * Sx + n^2 * Sy + 2 * m * n * Txy;
+S2 = n^2 * Sx + m^2 * Sy - 2 * m * n * Txy;
+T12 = -m * n * Sx + m * n * Sy + (m^2 - n^2) * Txy;
+
+% 5 - Calcular as deformações nas direções 1 e 2 (e1, e2, Y12)
+% Lei de Hooke para materiais ortotrópicos
+e1 = (S1 / E1) - (v12 * S2 / E1);
+v21 = v12 * (E2 / E1);  % AUXILIAR
+e2 = (S2 / E2) - (v21 * S1 / E2);  
+Y12 = T12 / G12;
+
+% 6 - Calcular as deformações nas direções x e y (ex, ey, Yxy)
+% Matriz de transformação de deformação
+ex = m^2 * e1 + n^2 * e2 - m * n * Y12;
+ey = n^2 * e1 + m^2 * e2 + m * n * Y12;
+Yxy = 2 * m * n * (e1 - e2) + (m^2 - n^2) * Y12;
+
+% 7 - Para verificar o e o critério de máxima tensão foi atingido pelo
+% carregamento fornecido, precisa comparar s1 com xt
+
+if S1 > 0
+    if S1 < Xt
+        fprintf('  S1 (%.2f MPa) < Xt (%.2f MPa): OK (material seguro)\n', S1, Xt);
+    else
+        fprintf('  S1 (%.2f MPa) >= Xt (%.2f MPa): FALHA!!\n', S1, Xt);
+    end
+else
+end
+
+% Exibir resultados
+fprintf('\n--- Resultados ---\n');
+fprintf('Tensões nas direções 1-2:\n');
+fprintf('  S1: %.2f MPa\n', S1);
+fprintf('  S2: %.2f MPa\n', S2);
+fprintf('  T12: %.2f MPa\n\n', T12);
+
+fprintf('Deformações nas direções 1-2:\n');
+fprintf('  e1: %.6f\n', e1);
+fprintf('  e2: %.6f\n', e2);
+fprintf('  Y12: %.6f\n\n', Y12);
+
+fprintf('Deformações nas direções x-y:\n');
+fprintf('  ex: %.6f\n', ex);
+fprintf('  ey: %.6f\n', ey);
+fprintf('  Yxy: %.6f\n', Yxy);
